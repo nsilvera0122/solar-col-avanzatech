@@ -213,6 +213,7 @@
             .author-name { border-left: none; padding-left: 0; margin-top: 10px; }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -391,6 +392,45 @@
         </div>
     </section>
 
+<!-- Estadísticas Mundiales -->
+<section class="py-5 bg-white" id="estadisticas">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="text-success">Estadísticas Energía Mundial</h2>
+            <p class="text-muted">Consumo histórico de energías renovables</p>
+        </div>
+
+        <div class="row">
+            <!-- Tabla -->
+            <div class="col-12 mb-5">
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Año</th>
+                                <th>Solar</th>
+                                <th>Eólica</th>
+                                <th>Hidro</th>
+                                <th>Geo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpo-tabla"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Gráficas -->
+            <div class="col-md-7">
+                <canvas id="barra-solar"></canvas>
+            </div>
+
+            <div class="col-md-5">
+                <canvas id="torta-mix"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+    
     <!-- Calculadora -->
     <section class="py-5 bg-light" id="calculadora-section">
         <div class="container">
@@ -470,6 +510,57 @@
                 confirmButtonColor: '#2ecc71'
             });
         }
+        // ===== DATOS =====
+const dataset = [
+    { año: 1998, solar: 1592, eolica: 811, hidro: 25809, geo: 1681 },
+    { año: 1999, solar: 21216, eolica: 9051, hidro: 26005, geo: 17661 },
+    { año: 2000, solar: 31407, eolica: 10589, hidro: 26466, geo: 18475 },
+    { año: 2001, solar: 38381, eolica: 14232, hidro: 25786, geo: 19189 },
+    { año: 2002, solar: 52344, eolica: 17990, hidro: 26262, geo: 20654 },
+    { año: 2003, solar: 63285, eolica: 22551, hidro: 26228, geo: 21814 },
+    { año: 2004, solar: 85626, eolica: 29715, hidro: 28164, geo: 23569 }
+];
+
+// ===== TABLA =====
+const tabla = document.getElementById('cuerpo-tabla');
+if(tabla){
+    tabla.innerHTML = dataset.map(d => `
+        <tr>
+            <td>${d.año}</td>
+            <td>${d.solar}</td>
+            <td>${d.eolica}</td>
+            <td>${d.hidro}</td>
+            <td>${d.geo}</td>
+        </tr>
+    `).join('');
+}
+
+// ===== GRÁFICO BARRAS =====
+new Chart(document.getElementById('barra-solar'), {
+    type: 'bar',
+    data: {
+        labels: dataset.map(d => d.año),
+        datasets: [{
+            label: 'Solar',
+            data: dataset.map(d => d.solar),
+            backgroundColor: '#2ecc71'
+        }]
+    }
+});
+
+// ===== GRÁFICO TORTA =====
+const prom = (key) => dataset.reduce((a,b)=>a+b[key],0)/dataset.length;
+
+new Chart(document.getElementById('torta-mix'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Solar','Eólica','Hidro','Geo'],
+        datasets: [{
+            data: [prom('solar'), prom('eolica'), prom('hidro'), prom('geo')],
+            backgroundColor: ['#2ecc71','#3498db','#1a2b48','#f1c40f']
+        }]
+    }
+});
     </script>
 </body>
 </html>
