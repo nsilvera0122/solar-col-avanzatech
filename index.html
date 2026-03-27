@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolarCol - Potencia Solar Colombia</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --verde-primario: #2ecc71;
+            --verde-oscuro: #27ae60;
+            --verde-suave: #e8f5e9;
+            --azul-oscuro: #1a2b48;
+            --blanco: #ffffff;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f8f9fa;
+            color: var(--azul-oscuro);
+            padding-top: 70px;
+        }
+
+        h1, h2, h3, .navbar-brand {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Navbar Principal */
+        .navbar {
+            background-color: var(--blanco) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            color: var(--azul-oscuro) !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--verde-primario) !important;
+        }
+
+        /* Estilo para el nombre del autor en el Navbar */
+        .author-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--verde-oscuro);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-left: 2px solid var(--verde-suave);
+            padding-left: 15px;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        /* Tablero de Cifras (MW) */
+        .stats-dashboard {
+            background: var(--azul-oscuro);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Sección de Conceptos con Sidebar */
+        .concept-section {
+            display: flex;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+            min-height: 600px;
+        }
+
+        .sidebar-concepts {
+            width: 280px;
+            background: var(--verde-suave);
+            border-right: 1px solid rgba(0,0,0,0.05);
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        .concept-btn {
+            width: 100%;
+            text-align: left;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: none;
+            background: white;
+            border-radius: 12px;
+            color: var(--azul-oscuro);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .concept-btn i {
+            margin-right: 12px;
+            color: var(--verde-primario);
+        }
+
+        .concept-btn:hover {
+            transform: translateX(5px);
+            background: var(--verde-primario);
+            color: white;
+        }
+
+        .concept-btn:hover i {
+            color: white;
+        }
+
+        .concept-btn.active {
+            background: var(--verde-primario);
+            color: white;
+        }
+
+        .concept-btn.active i {
+            color: white;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            padding: 40px;
+            background: white;
+        }
+
+        /* Pilares de Valor */
+        .pilar-card {
+            border: none;
+            border-radius: 20px;
+            padding: 2rem;
+            background: white;
+            transition: 0.3s;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .pilar-card:hover {
+            background: var(--verde-primario);
+            color: white;
+            transform: translateY(-10px);
+        }
+        .icon-pilar { color: var(--verde-primario); margin-bottom: 1rem; }
+        .pilar-card:hover .icon-pilar { color: white; }
+
+        /* Rueda */
+        .rueda-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 50px auto;
+        }
+        .rueda-item {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 3px solid var(--verde-primario);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .rueda-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px; height: 140px;
+            background: var(--verde-suave);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; font-size: 0.8rem; font-weight: bold; padding: 10px;
+            border: 2px dashed var(--verde-primario);
+        }
+
+        .btn-green {
+            background: var(--verde-primario);
+            color: white; border-radius: 50px; padding: 12px 30px; font-weight: bold; border: none;
+        }
+        .btn-green:hover { background: var(--verde-oscuro); color: white; }
+
+        @media (max-width: 768px) {
+            .concept-section { flex-direction: column; }
+            .sidebar-concepts { width: 100%; border-right: none; border-bottom: 1px solid #ddd; }
+            .author-name { border-left: none; padding-left: 0; margin-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegación -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#inicio">
+                <i data-lucide="sun" class="me-2 text-warning"></i>
+                <span class="text-success">SOLAR</span>COL
+            </a>
+            
+            <!-- Contenedor de navegación y nombre del autor -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#conceptos-clave">Conceptos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#valor">Pilares</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#potencial">Rueda Solar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#calculadora-section">Calculadora</a></li>
+                    <!-- Reemplazo de las tres rayas por el nombre solicitado -->
+                    <li class="nav-item">
+                        <span class="author-name d-none d-lg-block">NILSON SILVERA</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Nombre visible en móviles también ya que quitamos el toggler -->
+            <span class="author-name d-lg-none">NILSON SILVERA</span>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero" id="inicio">
+        <div class="container">
+            <h1 class="display-3 mb-3">Colombia Solar 2024</h1>
+            <p class="lead mb-4">Descubre la potencia del sol en el trópico colombiano.</p>
+        </div>
+    </header>
+
+    <!-- Tablero de Cifras (MW) -->
+    <div class="container">
+        <div class="stats-dashboard shadow">
+            <div class="row text-center">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h4 class="text-success fw-bold">1,245 MW</h4>
+                    <p class="small mb-0 text-uppercase">Capacidad Instalada</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h4 class="text-success fw-bold">+250</h4>
+                    <p class="small mb-0 text-uppercase">Proyectos Activos</p>
+                </div>
+                <div class="col-md-4">
+                    <h4 class="text-success fw-bold">1.5M</h4>
+                    <p class="small mb-0 text-uppercase">Hogares Beneficiados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Conceptos Clave con BARRA LATERAL -->
+    <section class="py-5" id="conceptos-clave">
+        <div class="container">
+            <div class="text-center mb-5 mt-4">
+                <h2 class="text-success">Conceptos Clave</h2>
+                <p class="text-muted">Explora la información detallada a través de nuestra barra lateral.</p>
+            </div>
+
+            <div class="concept-section">
+                <aside class="sidebar-concepts">
+                    <button class="concept-btn active" onclick="cambiarConcepto(this, 'introduccion')">
+                        <i data-lucide="info"></i> Introducción
+                    </button>
+                    <button class="concept-btn" onclick="cambiarConcepto(this, 'resumen')">
+                        <i data-lucide="award"></i> Resumen de Valor
+                    </button>
+                    <button class="concept-btn" onclick="cambiarConcepto(this, 'tecnico')">
+                        <i data-lucide="settings"></i> Temas Básicos
+                    </button>
+                    <button class="concept-btn" onclick="cambiarConcepto(this, 'futuro')">
+                        <i data-lucide="trending-up"></i> Futuro Solar
+                    </button>
+                </aside>
+
+                <main class="content-area" id="dynamic-content">
+                    <h3 class="text-success mb-3">Introducción</h3>
+                    <p>Colombia se posiciona como un líder regional en energía solar gracias a su ubicación geográfica. El aprovechamiento del sol no es solo una opción ambiental, sino una necesidad económica para la seguridad energética del país.</p>
+                    <img src="https://images.unsplash.com/photo-1509391366360-fe5bb583583a?auto=format&fit=crop&q=80&w=800" class="img-fluid rounded shadow-sm mt-3" alt="Parque Solar">
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pilares: Sostenibilidad, Ahorro, Futuro -->
+    <section class="py-5 bg-light" id="valor">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="pilar-card text-center">
+                        <i data-lucide="leaf" class="icon-pilar" size="40"></i>
+                        <h4>Sostenibilidad</h4>
+                        <p>Energía 100% limpia que reduce las emisiones de gases de efecto invernadero en el territorio nacional.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pilar-card text-center">
+                        <i data-lucide="trending-down" class="icon-pilar" size="40"></i>
+                        <h4>Ahorro</h4>
+                        <p>Reduce hasta un 70% el costo de tu factura eléctrica mensual mediante la autogeneración.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pilar-card text-center">
+                        <i data-lucide="fast-forward" class="icon-pilar" size="40"></i>
+                        <h4>Futuro</h4>
+                        <p>Innovación tecnológica constante que asegura energía para las próximas generaciones colombianas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rueda de Alternativas -->
+    <section class="py-5 bg-white" id="potencial">
+        <div class="container text-center">
+            <h2 class="text-success mb-5">Rueda de Potencia Solar</h2>
+            <div class="rueda-container">
+                <div class="rueda-center" id="rueda-txt">Haz clic en una opción</div>
+                
+                <div class="rueda-item" style="top:0%; left:50%; transform:translate(-50%,-50%);" onclick="updateRueda('Hogares', 'Paneles residenciales para ciudades con alta radiación.')">
+                    <i data-lucide="home"></i>
+                </div>
+                <div class="rueda-item" style="top:50%; left:100%; transform:translate(-50%,-50%);" onclick="updateRueda('Industria', 'Soluciones de gran escala para fábricas y centros logísticos.')">
+                    <i data-lucide="factory"></i>
+                </div>
+                <div class="rueda-item" style="top:100%; left:50%; transform:translate(-50%,-50%);" onclick="updateRueda('Campo', 'Bombeo solar y riego para el agro colombiano.')">
+                    <i data-lucide="wheat"></i>
+                </div>
+                <div class="rueda-item" style="top:50%; left:0%; transform:translate(-50%,-50%);" onclick="updateRueda('Público', 'Alumbrado solar para parques y vías municipales.')">
+                    <i data-lucide="lightbulb"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculadora -->
+    <section class="py-5 bg-light" id="calculadora-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 bg-white p-5 rounded-4 shadow">
+                    <h2 class="text-success text-center mb-4">Calculadora de Impacto</h2>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Consumo mensual (kWh)</label>
+                        <input type="number" id="inputKwh" class="form-control form-control-lg border-success" placeholder="Ej: 250">
+                    </div>
+                    <button class="btn btn-green w-100 py-3 shadow-sm" onclick="calcular()">CALCULAR AHORRO</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-5">
+        <div class="container text-center">
+            <h4 class="text-white">SOLARCOL</h4>
+            <p class="text-white-50">Transición Energética Colombia © 2024</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Lógica de la Barra Lateral de Conceptos
+        const contenidos = {
+            'introduccion': {
+                t: 'Introducción al Sector',
+                c: 'La energía solar en Colombia ha crecido un 400% en los últimos 5 años. La Ley 1715 ha sido el motor principal para que empresas y hogares adopten esta tecnología.'
+            },
+            'resumen': {
+                t: 'Resumen de Valor',
+                c: '1. Sostenibilidad Ambiental. <br>2. Incentivos tributarios (Deducción de renta). <br>3. Independencia de las fluctuaciones del mercado eléctrico.'
+            },
+            'tecnico': {
+                t: 'Temas Básicos',
+                c: 'Aprende sobre el efecto fotovoltaico, la diferencia entre corriente continua y alterna, y cómo los inversores gestionan la energía en tu hogar.'
+            },
+            'futuro': {
+                t: 'Visión 2030',
+                c: 'Colombia busca ser el "hub" energético de Latinoamérica, exportando energía limpia y alcanzando la carbono-neutralidad mediante granjas solares masivas.'
+            }
+        };
+
+        function cambiarConcepto(btn, key) {
+            document.querySelectorAll('.concept-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const content = document.getElementById('dynamic-content');
+            content.style.opacity = 0;
+            
+            setTimeout(() => {
+                content.innerHTML = `
+                    <h3 class="text-success mb-3 animate__animated animate__fadeIn">${contenidos[key].t}</h3>
+                    <p class="animate__animated animate__fadeIn">${contenidos[key].c}</p>
+                `;
+                content.style.opacity = 1;
+                lucide.createIcons();
+            }, 200);
+        }
+
+        function updateRueda(tit, txt) {
+            document.getElementById('rueda-txt').innerHTML = `<span class="text-success">${tit}</span><br><small>${txt}</small>`;
+        }
+
+        function calcular() {
+            const val = document.getElementById('inputKwh').value;
+            if(!val) return Swal.fire('Error', 'Ingresa un valor', 'error');
+            
+            const co2 = (val * 0.126).toFixed(2);
+            Swal.fire({
+                title: 'Impacto Solar',
+                html: `Ahorrarías <b>${co2} kg de CO2</b> al mes.<br>Equivale a plantar <b>${Math.ceil(co2/10)} árboles</b>.`,
+                icon: 'success',
+                confirmButtonColor: '#2ecc71'
+            });
+        }
+    </script>
+</body>
+</html>
